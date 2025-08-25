@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-bookworm
 
-# Ajustar repositórios para https + instalar dependências
+# Ajustar repositórios e instalar dependências
 RUN printf '%s\n' \
     "deb https://deb.debian.org/debian bookworm main contrib non-free-firmware" \
     "deb https://deb.debian.org/debian-security bookworm-security main contrib non-free-firmware" \
@@ -17,12 +17,25 @@ RUN printf '%s\n' \
         gcc \
         make \
         pkg-config \
-    && docker-php-ext-install pdo_pgsql \
+        curl \
+    && docker-php-ext-install pdo_pgsql pdo zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer globalmente
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Copiar php.ini customizado
 COPY php.ini /usr/local/etc/php/php.ini
 
 # Definir diretório de trabalho
-WORKDIR /var/www/html
+WORKDIR /var/www/html/atitude-recuperajur-service
+
+# Ajustar permissões para PHP-FPM
+RUN chown -R www-data:www-data /var/www/html/atitude-recuperajur-service
+
+# Expõe porta do PHP-FPM
+EXPOSE 9000
+
+# Comando padrão
+CMD ["php-fpm"]
