@@ -18,7 +18,11 @@ RUN printf '%s\n' \
         make \
         pkg-config \
         curl \
-    && docker-php-ext-install pdo_pgsql pdo zip \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo_pgsql pdo zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
