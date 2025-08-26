@@ -34,6 +34,7 @@ COPY php.ini /usr/local/etc/php/php.ini
 
 # Definir diretório de trabalho
 WORKDIR /var/www/html/atitude-recuperajur-service
+RUN composer install --no-dev --optimize-autoloader
 
 # Ajustar permissões para PHP-FPM
 RUN chown -R www-data:www-data /var/www/html/atitude-recuperajur-service
