@@ -35,10 +35,10 @@ services:
       - ./nginx/certs:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
     entrypoint: >
-      sh -c "certbot certonly --webroot
+      sh -c "certbot certonly
+      --webroot
       --webroot-path=/var/www/certbot
-      --email SEU_EMAIL_AQUI
+      --email jean@recuperajur.com.br
       --agree-tos
       --no-eff-email
-      -d SEU_DOMINIO_AQUI
-      && crond -f"
+      -d api.recuperajur.com.br"
