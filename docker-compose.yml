@@ -10,9 +10,7 @@ services:
     volumes:
       - ./nginx/certs:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
-      # Monta todo o projeto
       - /var/www/html/atitude-recuperajur-service:/var/www/html/atitude-recuperajur-service
-      # Bind mount direto para a pasta storage/files
       - /var/www/html/atitude-recuperajur-service/storage/files:/var/www/html/atitude-recuperajur-service/storage/files
     depends_on:
       - php
@@ -22,23 +20,9 @@ services:
     build: ./phpfpm
     container_name: php_backend
     volumes:
-      # Monta todo o projeto
       - /var/www/html/atitude-recuperajur-service:/var/www/html/atitude-recuperajur-service
-      # Bind mount direto para a pasta storage/files
       - /var/www/html/atitude-recuperajur-service/storage/files:/var/www/html/atitude-recuperajur-service/storage/files
     restart: unless-stopped
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./nginx/certs:/etc/letsencrypt
-      - ./nginx/www:/var/www/certbot
-    entrypoint: >
-      sh -c "certbot certonly
-      --webroot
-      --webroot-path=/var/www/certbot
-      --email jean@recuperajur.com.br
-      --agree-tos
-      --no-eff-email
-      -d api.recuperajur.com.br"
+  # Remova o certbot do docker-compose por enquanto
+  # Vamos executar manualmente primeiro
