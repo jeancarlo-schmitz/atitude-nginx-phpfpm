@@ -1,9 +1,17 @@
+# Parar e remover containers
 docker-compose down
 
-# Forçar remoção das imagens antigas relacionadas ao projeto
-docker-compose build --no-cache
+# Remover containers e imagens relacionadas
+docker container prune -f
+docker image rm $(docker images | grep nginx | awk '{print $3}')
 
-# Subir os containers novamente em background
+# Verificar se o Dockerfile está correto
+cat ./nginx/Dockerfile
+
+# Rebuild forçado
+docker-compose build --no-cache nginx
+
+# Subir novamente
 docker-compose up -d
 
 # Mostrar status dos containers
