@@ -29,11 +29,14 @@ RUN printf '%s\n' \
 # Instalar Composer globalmente
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Copiar php.ini customizado
+# Copiar configurações
 COPY php.ini /usr/local/etc/php/php.ini
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Definir diretório de trabalho
 WORKDIR /var/www/html/atitude-recuperajur-service
+
+# Instalar dependências do composer
 RUN composer install --no-dev --optimize-autoloader
 
 # Ajustar permissões para PHP-FPM
