@@ -10,7 +10,7 @@ services:
     volumes:
       - ./nginx/certs:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
-      - /var/www/html/atitude-recuperajur-service:/var/www/html
+      - /var/www/html/atitude-recuperajur-service:/var/www/html/atitude-recuperajur-service
       - /var/www/html/atitude-recuperajur-service/storage/files:/var/www/html/atitude-recuperajur-service/storage/files
     depends_on:
       - php
@@ -20,8 +20,8 @@ services:
     build: ./phpfpm
     container_name: php_backend
     volumes:
-      - /var/www/html/atitude-recuperajur-service:/var/www/html
-      - /var/www/html/atitude-recuperajur-service/storage/files:/var/www/html/storage/files
+      - /var/www/html/atitude-recuperajur-service:/var/www/html/atitude-recuperajur-service
+      - /var/www/html/atitude-recuperajur-service/storage/files:/var/www/html/atitude-recuperajur-service/storage/files
     restart: unless-stopped
 
   certbot:
