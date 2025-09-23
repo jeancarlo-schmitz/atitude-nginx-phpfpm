@@ -32,7 +32,7 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Copiar configurações PHP
 COPY php.ini /usr/local/etc/php/php.ini
-COPY www.conf /usr/local/etc/php-fpm.d/www.conf
+#COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Diretório de trabalho
 WORKDIR /var/www/html/atitude-recuperajur-service
