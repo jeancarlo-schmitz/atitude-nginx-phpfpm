@@ -42,8 +42,14 @@ RUN composer install --no-dev --optimize-autoloader
 # Ajustar permissões para PHP-FPM
 RUN chown -R www-data:www-data /var/www/html/atitude-recuperajur-service
 
+# Adicionar cron job
+RUN echo "* * * * * root /usr/bin/php /var/www/html/atitude-recuperajur-service/src/Interfaces/Cli/Cron/cron_scheduler.php >> /var/www/html/log/cron_scheduler.log 2>&1" \
+    > /etc/cron.d/recuperajur-cron \
+    && chmod 0644 /etc/cron.d/recuperajur-cron \
+    && crontab /etc/cron.d/recuperajur-cron
+
 # Expõe porta do PHP-FPM
 EXPOSE 9000
 
-# Comando padrão
-CMD ["php-fpm"]
+# Comando padrão -> inicia cron + php-fpm juntos
+CMD service cron start && php-fpm
