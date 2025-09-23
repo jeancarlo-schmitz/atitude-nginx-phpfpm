@@ -1,18 +1,18 @@
 # Parar e remover containers
 docker-compose down
 
-# Remover containers e imagens relacionadas
+# Limpar containers
 docker container prune -f
-docker image rm $(docker images | grep nginx | awk '{print $3}')
 
-# Verificar se o Dockerfile está correto
-cat ./nginx/Dockerfile
+# Remover imagens relacionadas (nginx e php)
+docker image rm $(docker images | grep docker-ngix-phpfpm_nginx | awk '{print $3}')
+docker image rm $(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}')
 
-# Rebuild forçado
-docker-compose build --no-cache nginx
+# Rebuild forçado de nginx e php
+docker-compose build --no-cache nginx php
 
 # Subir novamente
 docker-compose up -d
 
-# Mostrar status dos containers
+# Mostrar status
 docker ps

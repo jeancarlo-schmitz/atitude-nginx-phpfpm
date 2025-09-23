@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+echo "🔻 Parando containers..."
+docker-compose down
+
+echo "🧹 Limpando containers parados..."
+docker container prune -f
+
+echo "🧹 Removendo imagem antiga do php_backend..."
+docker image rm $(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}') || true
+
+echo "🔨 Rebuildando apenas o php..."
+docker-compose build --no-cache php
+
+echo "🚀 Subindo containers novamente..."
+docker-compose up -d
+
+echo "✅ Containers ativos:"
+docker ps
