@@ -1,6 +1,6 @@
 FROM composer:2.6 AS composer_build
 WORKDIR /app
-COPY /var/www/html/atitude-recuperajur-service /app
+COPY /app/atitude-recuperajur-service /app
 RUN composer install --no-dev --optimize-autoloader
 
 FROM php:8.3-fpm-bookworm
