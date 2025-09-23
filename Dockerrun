@@ -1,18 +1,24 @@
-# Parar e remover containers
+#!/bin/bash
+set -e
+
+echo "🔻 Parando e removendo containers..."
 docker-compose down
 
-# Limpar containers
+echo "🧹 Limpando containers parados..."
 docker container prune -f
 
-# Remover imagens relacionadas (nginx e php)
-docker image rm $(docker images | grep docker-ngix-phpfpm_nginx | awk '{print $3}')
-docker image rm $(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}')
+echo "🧹 Removendo imagens antigas do nginx e php..."
+docker image rm $(docker images | grep docker-ngix-phpfpm_nginx | awk '{print $3}') || true
+docker image rm $(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}') || true
 
-# Rebuild forçado de nginx e php
+echo "🔨 Rebuild forçado de nginx e php..."
 docker-compose build --no-cache nginx php
 
-# Subir novamente
+echo "🚀 Subindo containers novamente..."
 docker-compose up -d
 
-# Mostrar status
+echo "🛠️ Rodando composer install no container PHP..."
+docker-compose run --rm php composer install --no-dev --optimize-autoloader
+
+echo "✅ Containers ativos:"
 docker ps

@@ -1,8 +1,3 @@
-FROM composer:2.6 AS composer_build
-WORKDIR /app
-COPY /app/atitude-recuperajur-service /app
-RUN composer install --no-dev --optimize-autoloader
-
 FROM php:8.3-fpm-bookworm
 
 # Ajustar repositórios e instalar dependências
@@ -32,7 +27,7 @@ RUN printf '%s\n' \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar Composer globalmente
-#COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Copiar configurações
 COPY php.ini /usr/local/etc/php/php.ini
@@ -40,7 +35,6 @@ COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Definir diretório de trabalho
 WORKDIR /var/www/html/atitude-recuperajur-service
-COPY --from=composer_build /app /var/www/html/atitude-recuperajur-service
 
 # Instalar dependências do composer
 #RUN composer install --no-dev --optimize-autoloader
