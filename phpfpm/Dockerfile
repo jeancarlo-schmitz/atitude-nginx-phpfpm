@@ -41,7 +41,7 @@ WORKDIR /var/www/html/atitude-recuperajur-service
 RUN chown -R www-data:www-data /var/www/html/atitude-recuperajur-service
 
 # Adicionar cron job diretamente em /etc/cron.d/
-RUN echo "* * * * * root /usr/bin/php /var/www/html/atitude-recuperajur-service/src/Interfaces/Cli/Cron/cron_scheduler.php >> /var/www/html/log/cron_scheduler.log 2>&1" \
+RUN echo "* * * * * root /usr/local/bin/php /var/www/html/atitude-recuperajur-service/src/Interfaces/Cli/Cron/cron_scheduler.php >> /var/www/html/log/cron_scheduler.log 2>&1" \
     > /etc/cron.d/recuperajur-cron \
     && chmod 0644 /etc/cron.d/recuperajur-cron
 
