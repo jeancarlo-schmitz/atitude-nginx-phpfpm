@@ -1,23 +1,49 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "🔻 Parando containers..."
-docker-compose down
+# Função auxiliar para imprimir seções destacadas
+function section() {
+  echo -e "\n🔹 \033[1;36m$1\033[0m"
+}
 
-echo "🧹 Limpando containers parados..."
-docker container prune -f
+section "🔻 Parando containers..."
+docker-compose down || true
 
-echo "🧹 Removendo imagem antiga do php_backend..."
-docker image rm $(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}') || true
+section "🧹 Limpando containers parados..."
+docker container prune -f || true
 
-echo "🔨 Rebuildando apenas o php..."
+section "🧹 Removendo imagem antiga do PHP..."
+old_image_id=$(docker images | grep docker-ngix-phpfpm_php | awk '{print $3}' || true)
+if [ -n "$old_image_id" ]; then
+  docker image rm "$old_image_id" || true
+else
+  echo "ℹ️ Nenhuma imagem antiga encontrada."
+fi
+
+section "🔨 Rebuildando imagem PHP sem cache..."
 docker-compose build --no-cache php
 
-echo "🚀 Subindo containers novamente..."
+section "🚀 Subindo containers..."
 docker-compose up -d
 
-echo "🛠️ Rodando composer install no container PHP..."
-docker-compose run --rm php composer install --no-dev --optimize-autoloader
+section "🧾 Verificando consistência do composer.json e composer.lock..."
+# Valida o composer.json e compara hash do lock
+docker-compose run --rm php composer validate --no-check-all --strict || {
+  echo "❌ composer.json inválido. Corrija antes de prosseguir."
+  exit 1
+}
 
-echo "✅ Containers ativos:"
+# Detecta se o composer.lock está desatualizado em relação ao composer.json
+if docker-compose run --rm php composer install --dry-run 2>&1 | grep -q "lock file is not up to date"; then
+  section "⚠️ composer.lock desatualizado — rodando composer update..."
+  docker-compose run --rm php composer update --no-dev --optimize-autoloader
+else
+  section "🛠️ Rodando composer install..."
+  docker-compose run --rm php composer install --no-dev --optimize-autoloader
+fi
+
+section "🧹 Otimizando autoload..."
+docker-compose run --rm php composer dump-autoload --optimize
+
+section "✅ Containers ativos:"
 docker ps
