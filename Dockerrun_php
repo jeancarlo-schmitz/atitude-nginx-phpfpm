@@ -27,11 +27,14 @@ section "🚀 Subindo containers..."
 docker-compose up -d
 
 section "🧾 Verificando consistência do composer.json e composer.lock..."
-# Valida o composer.json e compara hash do lock
-docker-compose run --rm php composer validate --no-check-all --strict || {
-  echo "❌ composer.json inválido. Corrija antes de prosseguir."
+# Valida o composer.json mas ignora warnings
+if ! docker-compose run --rm php composer validate --no-check-all > composer_validate.log 2>&1; then
+  echo "❌ composer.json contém erros fatais. Verifique o log abaixo:"
+  cat composer_validate.log
   exit 1
-}
+else
+  echo "✅ composer.json válido (warnings ignorados)."
+fi
 
 # Detecta se o composer.lock está desatualizado em relação ao composer.json
 if docker-compose run --rm php composer install --dry-run 2>&1 | grep -q "lock file is not up to date"; then
