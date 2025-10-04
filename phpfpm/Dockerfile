@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-bookworm
 
-# Ajustar repositórios e instalar dependências + cron
+# Ajustar repositórios e instalar dependências + cron + ghostscript
 RUN printf '%s\n' \
     "deb https://deb.debian.org/debian bookworm main contrib non-free-firmware" \
     "deb https://deb.debian.org/debian-security bookworm-security main contrib non-free-firmware" \
@@ -22,10 +22,14 @@ RUN printf '%s\n' \
         libjpeg62-turbo-dev \
         libpng-dev \
         cron \
+        ghostscript \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo_pgsql pdo zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Verificar se o Ghostscript foi instalado corretamente
+RUN gs --version
 
 # Instalar Composer globalmente
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
